@@ -1,0 +1,7 @@
+# Team2_Python_Pioneers_PythonHackathon_Sep_2026
+Team2_Python_Pioneer_PyhtonHackathon_Sep_2026
+Team: Python_Pioneer
+Aditi Mishra
+Saranya Shanmugam
+Sasi Laguduva
+Sudha Madhuri Basa
