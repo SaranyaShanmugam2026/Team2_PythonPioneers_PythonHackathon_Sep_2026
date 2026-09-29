@@ -1034,26 +1034,59 @@ patients and tested on the other 1/5, five times over (5-fold cross-validation),
 # 6. KEY TAKEAWAYS & CONCLUSION
 # =====================================================================
 elif page == "📌 Key Takeaways & Conclusion":
-    st.markdown("<div class='pagetitle'>📌 Key Takeaways</div>", unsafe_allow_html=True)
-  take = [
-    "Within 6 months, 38.5% of patients were readmitted, compared with 2.8% who died",
 
-    "Current clinical severity showed a clear difference: 26.7% of Killip 4 patients died within 6 months, compared with 0.8% of Killip 1",
+    st.markdown(
+        "<div class='pagetitle'>📌 Key Takeaways</div>",
+        unsafe_allow_html=True
+    )
 
-    "Higher-risk patterns were observed with very high troponin, reduced kidney function, high potassium, severe anemia and low sodium",
+    take = [
+        "Within 6 months, 38.5% of patients were readmitted, compared with 2.8% who died",
 
-    "NLR was available for about 99% of patients, while hs-CRP and blood-gas measurements were missing for about half",
+        "Current clinical severity showed a clear difference: 26.7% of Killip 4 patients died within 6 months, compared with 0.8% of Killip 1",
 
-    "About 4 in 10 patients received an ACE inhibitor/ARB or a beta-blocker during hospitalization",
+        "Higher-risk patterns were observed with very high troponin, reduced kidney function, high potassium, severe anemia and low sodium",
 
-    "In 5-fold cross-validation for 6-month mortality, Logistic Regression identified about 70% of patients who died, while the neural network identified none at the 0.5 threshold"
-]
-    items = "".join(f"<div class='it'>✅ {x}</div>" for x in take)
-    st.markdown(f"<div class='checkbox'><b class='h'>Key Clinical Findings:</b>{items}</div>", unsafe_allow_html=True)
+        "NLR was available for about 99% of patients, while hs-CRP and blood-gas measurements were missing for about half",
 
-    st.markdown("<div class='pagetitle' style='font-size:36px'>🏁 Conclusion</div>", unsafe_allow_html=True)
-    concl = ["With tests the hospital already does on day 1 (bedside check + routine blood tests), it can spot high-risk patients early",
-             "Acting on these warning signs can save lives, free ICU beds and reduce readmissions through early follow-up",
-             "Limits: one hospital's data and few deaths; results show links, not proof of cause"]
-    items = "".join(f"<div class='it'>✅ {x}</div>" for x in concl)
-    st.markdown(f"<div class='checkbox'>{items}</div>", unsafe_allow_html=True)
+        "About 4 in 10 patients received an ACE inhibitor/ARB or a beta-blocker during hospitalization",
+
+        "In 5-fold cross-validation for 6-month mortality, Logistic Regression identified about 70% of patients who died, while the neural network identified none at the 0.5 threshold"
+    ]
+
+    items = "".join(
+        f"<div class='it'>✅ {x}</div>"
+        for x in take
+    )
+
+    st.markdown(
+        f"<div class='checkbox'>"
+        f"<b class='h'>Key Clinical Findings:</b>{items}"
+        f"</div>",
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        "<div class='pagetitle' style='font-size:36px'>"
+        "🏁 Conclusion"
+        "</div>",
+        unsafe_allow_html=True
+    )
+
+    concl = [
+        "With tests the hospital already does on day 1 (bedside check + routine blood tests), it can spot high-risk patients early",
+
+        "Acting on these warning signs can save lives, free ICU beds and reduce readmissions through early follow-up",
+
+        "Limits: one hospital's data and few deaths; results show links, not proof of cause"
+    ]
+
+    items = "".join(
+        f"<div class='it'>✅ {x}</div>"
+        for x in concl
+    )
+
+    st.markdown(
+        f"<div class='checkbox'>{items}</div>",
+        unsafe_allow_html=True
+    )
