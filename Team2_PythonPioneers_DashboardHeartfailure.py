@@ -396,7 +396,7 @@ elif page == "🩺 Interactive Clinical Insights":
     with c1: kpi2("🔁", "Came back (6 months)", pct(df["re_admission_within_6_months"].mean()))
     with c2: kpi2("⚠️", "Died (6 months)", pct(df["death_within_6_months"].mean()))
     with c3: kpi2("❤️", "Severe symptoms (NYHA 3–4)", pct((df["nyha_cardiac_function_classification"] >= 3).mean()))
-    with c4: kpi2("🧪", "Median BNP", f"{df['brain_natriuretic_peptide'].median():.0f}")
+   
     st.write("")
 
     # ---------------- helper to cut a column into labelled groups ----------------
