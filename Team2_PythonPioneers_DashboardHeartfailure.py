@@ -304,21 +304,21 @@ elif page == "📘 Data Overview":
                 unsafe_allow_html=True)
 
    # years = pd.to_datetime(df["admission_date"])
-    raw_dates = pd.to_numeric(df["admission_date"], errors="coerce")
-    if raw_dates.notna().mean() > 0.9:
-        years = pd.to_datetime(raw_dates, unit="D", origin="1899-12-30")
-    else:
-        years = pd.to_datetime(df["admission_date"], errors="coerce")
-    spec_rows = [("👥", "Patients", f"{len(df):,} hospitalised heart failure patients"),
-                 ("🗂️", "Source", "7 hospital tables, linked by patient ID"),
-                # ("📅", "Admissions", f"{years.dt.year.min()} – {years.dt.year.max()}"),
-                 "📅", "Admissions", f"{years.min():%d %b %Y} – {years.max():%d %b %Y}",
-                 ("⏱️", "Follow-up", "28 days, 3 months, 6 months"),
-                 ("🧪", "Tests", "100+ blood tests and vital signs"),
-                 ("💊", "Medicines", "25 drugs given in hospital"),
-                 ("📋", "Final table", "2,008 rows × 210 columns")]
-    spec = "".join(f"<div class='row'><div class='ic'>{i}</div><div><div class='k'>{k}:</div><div class='v'>{v}</div></div></div>"
-                   for i, k, v in spec_rows)
+  raw_dates = pd.to_numeric(df["admission_date"], errors="coerce")
+    if raw_dates.notna().mean() > 0.9:
+        years = pd.to_datetime(raw_dates, unit="D", origin="1899-12-30")
+    else:
+        years = pd.to_datetime(df["admission_date"], errors="coerce")
+
+    spec_rows = [(":busts_in_silhouette:", "Patients", f"{len(df):,} hospitalised heart failure patients"),
+                 (":card_index_dividers:", "Source", "7 hospital tables, linked by patient ID"),
+                 (":date:", "Admissions", f"{years.min():%d %b %Y} – {years.max():%d %b %Y}"),
+                 (":stopwatch:", "Follow-up", "28 days, 3 months, 6 months"),
+                 (":test_tube:", "Tests", "100+ blood tests and vital signs"),
+                 (":pill:", "Medicines", "25 drugs given in hospital"),
+                 (":clipboard:", "Final table", "2,008 rows × 210 columns")]
+    spec = "".join(f"<div class='row'><div class='ic'>{i}</div><div><div class='k'>{k}:</div><div class='v'>{v}</div></div></div>"
+                   for i, k, v in spec_rows)
 
     left, right = st.columns([1, 3.2])
     with left:
