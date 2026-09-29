@@ -307,7 +307,8 @@ elif page == "📘 Data Overview":
    # years = pd.to_datetime(df["admission_date"])
     spec_rows = [("👥", "Patients", f"{len(df):,} hospitalised heart failure patients"),
                  ("🗂️", "Source", "7 hospital tables, linked by patient ID"),
-                # ("📅", "Admissions", f"{years.dt.year.min()} – {years.dt.year.max()}"),
+                #("📅", "Admissions", f"{years.dt.year.min()} – {years.dt.year.max()}"),
+                 ("📅", "Admissions", "2013 – 2016"),
                  ("⏱️", "Follow-up", "28 days, 3 months, 6 months"),
                  ("🧪", "Tests", "100+ blood tests and vital signs"),
                  ("💊", "Medicines", "25 drugs given in hospital"),
