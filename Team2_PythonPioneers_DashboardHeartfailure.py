@@ -296,273 +296,77 @@ if page == "🏠 Introduction":
 # =====================================================================
 # 2. DATA OVERVIEW
 # =====================================================================
-elif page == "📘 Data Overview":
+elif page == ":blue_book: Data Overview":
+    st.markdown("<div class='bigtitle'><span></span>DATA OVERVIEW<span></span></div>"
+                "<div class='lead'>This dataset links 7 hospital tables for 2,008 heart failure patients: who they are, "
+                "how sick their heart is, their other diseases, 100+ blood tests, alertness, medicines, and what happened "
+                "to them up to 6 months after discharge. It lets us find who needs extra care and spot them early.</div>",
+                unsafe_allow_html=True)
 
-    st.markdown(
-        "<div class='bigtitle'><span></span>DATA OVERVIEW<span></span></div>"
-        "<div class='lead'>This dataset links 7 hospital tables for 2,008 heart failure patients: who they are, "
-        "how sick their heart is, their other diseases, 100+ blood tests, alertness, medicines, and what happened "
-        "to them up to 6 months after discharge. It lets us find who needs extra care and spot them early.</div>",
-        unsafe_allow_html=True
-    )
+    # Admission dates: the .xlsb file stores dates as Excel day numbers (42370 = 1 Jan 2016),
+    # the .csv stores them as text. Without this fix the page shows "1970 – 1970".
+    raw_dates = pd.to_numeric(df["admission_date"], errors="coerce")
+    if raw_dates.notna().mean() > 0.9:
+        years = pd.to_datetime(raw_dates, unit="D", origin="1899-12-30")
+    else:
+        years = pd.to_datetime(df["admission_date"], errors="coerce")
 
-    # Handle admission dates stored either as Excel serial numbers or date strings
-    raw_dates = pd.to_numeric(df["admission_date"], errors="coerce")
+    spec_rows = [(":busts_in_silhouette:", "Patients", f"{len(df):,} hospitalised heart failure patients"),
+                 (":card_index_dividers:", "Source", "7 hospital tables, linked by patient ID"),
+                 (":date:", "Admissions", f"{years.min():%d %b %Y} – {years.max():%d %b %Y}"),
+                 (":stopwatch:", "Follow-up", "28 days, 3 months, 6 months"),
+                 (":test_tube:", "Tests", "100+ blood tests and vital signs"),
+                 (":pill:", "Medicines", "25 drugs given in hospital"),
+                 (":clipboard:", "Final table", "2,008 rows × 210 columns")]
+    spec = "".join(f"<div class='row'><div class='ic'>{i}</div><div><div class='k'>{k}:</div><div class='v'>{v}</div></div></div>"
+                   for i, k, v in spec_rows)
 
-    if raw_dates.notna().mean() > 0.9:
-        years = pd.to_datetime(
-            raw_dates,
-            unit="D",
-            origin="1899-12-30"
-        )
-    else:
-        years = pd.to_datetime(
-            df["admission_date"],
-            errors="coerce"
-        )
+    left, right = st.columns([1, 3.2])
+    with left:
+        st.markdown(f"<div class='spec'><h3>Cardiac Failure<br>Dataset Specifications</h3>{spec}</div>", unsafe_allow_html=True)
 
-    spec_rows = [
-        (":busts_in_silhouette:", "Patients",
-         f"{len(df):,} hospitalised heart failure patients"),
+    def mini(fig):
+        fig.update_layout(template="plotly_white", height=150, margin=dict(t=5, l=5, r=5, b=5), showlegend=False,
+                          xaxis_title="", yaxis_title="", font_size=10)
+        fig.update_traces(selector=dict(type="pie"), textinfo="none")
+        return fig
 
-        (":card_index_dividers:", "Source",
-         "7 hospital tables, linked by patient ID"),
-
-        (":date:", "Admissions",
-         f"{years.min():%d %b %Y} – {years.max():%d %b %Y}"),
-
-        (":stopwatch:", "Follow-up",
-         "28 days, 3 months, 6 months"),
-
-        (":test_tube:", "Tests",
-         "100+ blood tests and vital signs"),
-
-        (":pill:", "Medicines",
-         "25 drugs given in hospital"),
-
-        (":clipboard:", "Final table",
-         f"{df.shape[0]:,} rows × {df.shape[1]} columns")
-    ]
-
-    spec = "".join(
-        f"<div class='row'>"
-        f"<div class='ic'>{i}</div>"
-        f"<div><div class='k'>{k}:</div><div class='v'>{v}</div></div>"
-        f"</div>"
-        for i, k, v in spec_rows
-    )
-
-    left, right = st.columns([1, 3.2])
-
-    with left:
-        st.markdown(
-            f"<div class='spec'>"
-            f"<h3>Cardiac Failure<br>Dataset Specifications</h3>"
-            f"{spec}"
-            f"</div>",
-            unsafe_allow_html=True
-        )
-
-    def mini(fig):
-        fig.update_layout(
-            template="plotly_white",
-            height=150,
-            margin=dict(t=5, l=5, r=5, b=5),
-            showlegend=False,
-            xaxis_title="",
-            yaxis_title="",
-            font_size=10
-        )
-
-        fig.update_traces(
-            selector=dict(type="pie"),
-            textinfo="none"
-        )
-
-        return fig
-
-    cards = [
-        (
-            "🧍",
-            "DEMOGRAPHY",
-            NAVY,
-            ["Gender", "Age group", "Height, weight, BMI", "Occupation"],
-            lambda: px.bar(
-                df["agecat"].value_counts().sort_index(),
-                color_discrete_sequence=[NAVY]
-            )
-        ),
-
-        (
-            "❤️",
-            "CARDIAC",
-            ALERT,
-            [
-                "NYHA class (symptoms)",
-                "Killip grade (fluid/shock)",
-                "Heart failure type",
-                "Heart scan (LVEF)"
-            ],
-            lambda: px.bar(
-                df["nyha_cardiac_function_classification"]
-                .value_counts()
-                .sort_index(),
-                color_discrete_sequence=[ALERT]
-            )
-        ),
-
-        (
-            "📜",
-            "HISTORY",
-            GREEN,
-            [
-                "Diabetes",
-                "Kidney disease",
-                "COPD, liver disease",
-                "Comorbidity score"
-            ],
-            lambda: px.bar(
-                pd.Series({
-                    "Kidney": df["moderate_to_severe_chronic_kidney_disease"].mean(),
-                    "Diabetes": df["diabetes"].mean(),
-                    "COPD": df["chronic_obstructive_pulmonary_disease"].mean()
-                }) * 100,
-                color_discrete_sequence=[GREEN]
-            )
-        ),
-
-        (
-            "🏥",
-            "HOSPITAL STAY",
-            BLUE,
-            [
-                "Admission type",
-                "Days in hospital",
-                "Death: 28d / 3m / 6m",
-                "Readmission: 28d / 3m / 6m"
-            ],
-            lambda: px.bar(
-                pd.Series({
-                    "Came back": df["re_admission_within_6_months"].mean() * 100,
-                    "Died": df["death_within_6_months"].mean() * 100
-                }),
-                color_discrete_sequence=[READMIT, DEATH]
-            )
-        ),
-
-        (
-            "🧪",
-            "LABS",
-            TEAL2,
-            [
-                "BNP (heart strain)",
-                "Troponin (heart damage)",
-                "Kidney tests (eGFR)",
-                "Blood count, salts"
-            ],
-            lambda: px.histogram(
-                np.log10(
-                    df.loc[
-                        df["brain_natriuretic_peptide"] > 0,
-                        "brain_natriuretic_peptide"
-                    ]
-                ),
-                nbins=25,
-                color_discrete_sequence=[TEAL2]
-            )
-        ),
-
-        (
-            "🧠",
-            "RESPONSIVENESS",
-            "#6C4AB6",
-            [
-                "Eye opening",
-                "Verbal response",
-                "Movement",
-                "GCS score (alertness)"
-            ],
-            lambda: px.pie(
-                values=df["gcs_category"].value_counts().values,
-                names=df["gcs_category"].value_counts().index,
-                hole=.6,
-                color_discrete_sequence=[
-                    "#6C4AB6",
-                    "#B9A6E3",
-                    "#D8CCF1",
-                    "#EDE7F8"
-                ]
-            )
-        ),
-
-        (
-            "💊",
-            "PRESCRIPTIONS",
-            "#E07A5F",
-            [
-                "25 medicines",
-                "Water tablets",
-                "Heart medicines",
-                "Medicines per patient"
-            ],
-            lambda: px.histogram(
-                df["total_drugs"],
-                nbins=16,
-                color_discrete_sequence=["#E07A5F"]
-            )
-        ),
-
-        (
-            "✨",
-            "DERIVED FEATURES",
-            TEAL,
-            [
-                "BMI / BP groups",
-                "Kidney stage, anemia level",
-                "Warning flags",
-                "NLR, comorbidity count"
-            ],
-            lambda: px.pie(
-                values=df["bmi_category"].value_counts().values,
-                names=df["bmi_category"].value_counts().index,
-                hole=.6,
-                color_discrete_sequence=[
-                    TEAL,
-                    "#6CC3B0",
-                    "#B7E4D8",
-                    NAVY
-                ]
-            )
-        )
-    ]
-
-    with right:
-        for row in (cards[:4], cards[4:]):
-            cols = st.columns(4)
-
-            for col, (ic, nm, colr, items, chart) in zip(cols, row):
-                with col:
-                    with st.container(border=True):
-
-                        bullets = "".join(
-                            f"<li>{x}</li>"
-                            for x in items
-                        )
-
-                        st.markdown(
-                            f"<div class='card-h'>"
-                            f"<div class='ic'>{ic}</div>"
-                            f"<div class='nm' style='color:{colr}'>{nm}</div>"
-                            f"<ul>{bullets}</ul>"
-                            f"</div>",
-                            unsafe_allow_html=True
-                        )
-
-                        st.plotly_chart(
-                            mini(chart()),
-                            width="stretch",
-                            config={"displayModeBar": False}
-                        )
+    cards = [
+        (":standing_person:", "DEMOGRAPHY", NAVY, ["Gender", "Age group", "Height, weight, BMI", "Occupation"],
+         lambda: px.bar(df["agecat"].value_counts().sort_index(), color_discrete_sequence=[NAVY])),
+        (":heart:", "CARDIAC", ALERT, ["NYHA class (symptoms)", "Killip grade (fluid/shock)", "Heart failure type", "Heart scan (LVEF)"],
+         lambda: px.bar(df["nyha_cardiac_function_classification"].value_counts().sort_index(), color_discrete_sequence=[ALERT])),
+        (":scroll:", "HISTORY", GREEN, ["Diabetes", "Kidney disease", "COPD, liver disease", "Comorbidity score"],
+         lambda: px.bar(pd.Series({"Kidney": df["moderate_to_severe_chronic_kidney_disease"].mean(),
+                                   "Diabetes": df["diabetes"].mean(),
+                                   "COPD": df["chronic_obstructive_pulmonary_disease"].mean()}) * 100,
+                        color_discrete_sequence=[GREEN])),
+        (":hospital:", "HOSPITAL STAY", BLUE, ["Admission type", "Days in hospital", "Death: 28d / 3m / 6m", "Readmission: 28d / 3m / 6m"],
+         lambda: px.bar(pd.Series({"Came back": df["re_admission_within_6_months"].mean(),
+                                   "Died": df["death_within_6_months"].mean()}) * 100,
+                        color=["Came back", "Died"], color_discrete_sequence=[READMIT, DEATH])),
+        (":test_tube:", "LABS", TEAL2, ["BNP (heart strain)", "Troponin (heart damage)", "Kidney tests (eGFR)", "Blood count, salts"],
+         lambda: px.histogram(np.log10(df["brain_natriuretic_peptide"].dropna()), nbins=25, color_discrete_sequence=[TEAL2])),
+        (":brain:", "RESPONSIVENESS", "#6C4AB6", ["Eye opening", "Verbal response", "Movement", "GCS score (alertness)"],
+         lambda: px.pie(values=df["gcs_category"].value_counts().values, names=df["gcs_category"].value_counts().index,
+                        hole=.6, color_discrete_sequence=["#6C4AB6", "#B9A6E3", "#D8CCF1", "#EDE7F8"])),
+        (":pill:", "PRESCRIPTIONS", "#E07A5F", ["25 medicines", "Water tablets", "Heart medicines", "Medicines per patient"],
+         lambda: px.histogram(df["total_drugs"], nbins=16, color_discrete_sequence=["#E07A5F"])),
+        (":sparkles:", "DERIVED FEATURES", TEAL, ["BMI, BP, GCS groups", "Yes/no warning flags", "Log BNP, log hs-CRP", "Comorbidity count"],
+         lambda: px.pie(values=df["bmi_category"].value_counts().values, names=df["bmi_category"].value_counts().index,
+                        hole=.6, color_discrete_sequence=[TEAL, "#6CC3B0", "#B7E4D8", NAVY])),
+    ]
+    with right:
+        for row in (cards[:4], cards[4:]):
+            cols = st.columns(4)
+            for col, (ic, nm, colr, items, chart) in zip(cols, row):
+                with col:
+                    with st.container(border=True):
+                        bullets = "".join(f"<li>{x}</li>" for x in items)
+                        st.markdown(f"<div class='card-h'><div class='ic'>{ic}</div>"
+                                    f"<div class='nm' style='color:{colr}'>{nm}</div><ul>{bullets}</ul></div>",
+                                    unsafe_allow_html=True)
+                        st.plotly_chart(mini(chart()), width="stretch", config={"displayModeBar": False})
 # =====================================================================
 # 4. INTERACTIVE CLINICAL INSIGHTS  (guided: Insight Area -> Marker -> Outcome)
 # =====================================================================
@@ -1001,12 +805,19 @@ patients and tested on the other 1/5, five times over (5-fold cross-validation),
 # =====================================================================
 elif page == "📌 Key Takeaways & Conclusion":
     st.markdown("<div class='pagetitle'>📌 Key Takeaways</div>", unsafe_allow_html=True)
-    take = ["Coming back to hospital (38.5% in 6 months) is a much bigger problem than death (2.8%)",
-            "How sick the patient is today matters most: 27% of Killip 4 patients died within 6 months vs 0.8% of Killip 1",
-            "Heart and organ warning signs: very high troponin, weak kidneys, high potassium, severe anemia and low sodium",
-            "Simple routine tests work best: NLR is free and available for 99% of patients, while hs-CRP and blood gas were missing for about half",
-            "Only about 4 in 10 patients get the key long-term heart medicines (ACE inhibitor/ARB, beta-blocker)",
-            "Our simple, explainable model (Logistic Regression) catches 70% of 6-month deaths; the neural network caught none"]
+  take = [
+    "Within 6 months, 38.5% of patients were readmitted, compared with 2.8% who died",
+
+    "Current clinical severity showed a clear difference: 26.7% of Killip 4 patients died within 6 months, compared with 0.8% of Killip 1",
+
+    "Higher-risk patterns were observed with very high troponin, reduced kidney function, high potassium, severe anemia and low sodium",
+
+    "NLR was available for about 99% of patients, while hs-CRP and blood-gas measurements were missing for about half",
+
+    "About 4 in 10 patients received an ACE inhibitor/ARB or a beta-blocker during hospitalization",
+
+    "In 5-fold cross-validation for 6-month mortality, Logistic Regression identified about 70% of patients who died, while the neural network identified none at the 0.5 threshold"
+]
     items = "".join(f"<div class='it'>✅ {x}</div>" for x in take)
     st.markdown(f"<div class='checkbox'><b class='h'>Key Clinical Findings:</b>{items}</div>", unsafe_allow_html=True)
 
