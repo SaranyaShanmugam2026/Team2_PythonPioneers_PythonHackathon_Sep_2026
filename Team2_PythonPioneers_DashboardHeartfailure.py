@@ -866,12 +866,12 @@ elif page == "📌 Key Takeaways & Conclusion":
     )
 
     concl = [
-        "With tests the hospital already does on day 1 (bedside check + routine blood tests), it can spot high-risk patients early",
+    "Admission-day clinical and laboratory measures showed useful patterns for identifying patients at higher observed risk",
 
-        "Acting on these warning signs can save lives, free ICU beds and reduce readmissions through early follow-up",
+    "These findings can support earlier risk review and help identify patients who may need closer follow-up",
 
-        "Limits: one hospital's data and few deaths; results show links, not proof of cause"
-    ]
+    "Limits: one hospital's data and few deaths; results show links, not proof of cause"
+]
 
     items = "".join(
         f"<div class='it'>✅ {x}</div>"
