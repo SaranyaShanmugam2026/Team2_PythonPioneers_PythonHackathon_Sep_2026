@@ -1004,7 +1004,7 @@ elif page == "📌 Key Takeaways & Conclusion":
     take = ["Coming back to hospital (38.5% in 6 months) is a much bigger problem than death (2.8%)",
             "How sick the patient is today matters most: 27% of Killip 4 patients died within 6 months vs 0.8% of Killip 1",
             "Heart and organ warning signs: very high troponin, weak kidneys, high potassium, severe anemia and low sodium",
-            "Simple routine tests work best: NLR is free and available for 99% of patients, while hs-CRP and blood gas were missing for about half",,
+            "Simple routine tests work best: NLR is free and available for 99% of patients, while hs-CRP and blood gas were missing for about half",
             "Only about 4 in 10 patients get the key long-term heart medicines (ACE inhibitor/ARB, beta-blocker)",
             "Our simple, explainable model (Logistic Regression) catches 70% of 6-month deaths; the neural network caught none"]
     items = "".join(f"<div class='it'>✅ {x}</div>" for x in take)
