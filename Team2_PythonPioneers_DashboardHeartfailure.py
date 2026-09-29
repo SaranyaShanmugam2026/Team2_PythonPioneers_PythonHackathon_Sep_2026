@@ -323,43 +323,43 @@ elif page == "📘 Data Overview":
             errors="coerce"
         )
 
-    spec_rows = [
-        (
-            ":busts_in_silhouette:",
-            "Patients",
-            f"{len(df):,} hospitalised heart failure patients"
-        ),
-        (
-            ":card_index_dividers:",
-            "Source",
-            "7 hospital tables, linked by patient ID"
-        ),
-        (
-            ":date:",
-            "Admissions",
-            f"{years.min():%d %b %Y} – {years.max():%d %b %Y}"
-        ),
-        (
-            ":stopwatch:",
-            "Follow-up",
-            "28 days, 3 months, 6 months"
-        ),
-        (
-            ":test_tube:",
-            "Tests",
-            "100+ blood tests and vital signs"
-        ),
-        (
-            ":pill:",
-            "Medicines",
-            "25 drugs given in hospital"
-        ),
-        (
-            ":clipboard:",
-            "Final table",
-            f"{df.shape[0]:,} rows × {df.shape[1]} columns"
-        )
-    ]
+ spec_rows = [
+    (
+        "👥",
+        "Patients",
+        f"{len(df):,} hospitalised heart failure patients"
+    ),
+    (
+        "🗂️",
+        "Source",
+        "7 hospital tables, linked by patient ID"
+    ),
+    (
+        "📅",
+        "Admissions",
+        f"{years.min():%d %b %Y} – {years.max():%d %b %Y}"
+    ),
+    (
+        "⏱️",
+        "Follow-up",
+        "28 days, 3 months, 6 months"
+    ),
+    (
+        "🧪",
+        "Tests",
+        "100+ blood tests and vital signs"
+    ),
+    (
+        "💊",
+        "Medicines",
+        "25 drugs given in hospital"
+    ),
+    (
+        "📋",
+        "Final table",
+        f"{df.shape[0]:,} rows × {df.shape[1]} columns"
+    )
+]
 
     spec = "".join(
         f"<div class='row'>"
