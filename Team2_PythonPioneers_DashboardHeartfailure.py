@@ -361,6 +361,34 @@ elif page == "📘 Data Overview":
                                     f"<div class='nm' style='color:{colr}'>{nm}</div><ul>{bullets}</ul></div>",
                                     unsafe_allow_html=True)
                         st.plotly_chart(mini(chart()), width="stretch", config={"displayModeBar": False})
+
+
+
+# =====================================================================
+# 3. DATA CLEANING & FEATURE ENGINEERING
+# =====================================================================
+elif page == "🧹 Data Cleaning & Feature Engineering":
+    st.markdown("<div class='pagetitle'>🧹 Data Cleaning & Feature Engineering</div>", unsafe_allow_html=True)
+    steps = ["Removed an incorrect patient record and joined all 7 tables into one (one row per patient)",
+             "Set impossible values to blank: 0 kg weight, 0 pulse",
+             "Fixed wrong units: troponin, hematocrit and heart-scan values",
+             "Filled blanks only when the meaning was clear (blank breathing support = no ventilation)",
+             "Kept real gaps empty: missing lab tests were not invented",
+             "Changed medicines from many rows per patient to one row per patient",
+             "Renamed some lab columns and made yes/no columns 1/0"]
+    items = "".join(f"<div class='it'>✅ {x}</div>" for x in steps)
+    st.markdown(f"<div class='checkbox'><b class='h'>Data Cleaning Steps:</b>{items}</div>", unsafe_allow_html=True)
+
+    st.markdown("<h3 style='color:#073B4C'>🧠 Engineered Features</h3>", unsafe_allow_html=True)
+    feats = pd.DataFrame({
+        "Feature": ["bmi_category, bp_category", "ckd_stage, anemia_level", "bnp_elevated_flag, troponin_elevated_flag",
+                    "polypharmacy_flag, total_drugs", "comorbidity_count", "nlr (neutrophil ÷ lymphocyte)", "bnp_log, hs_crp_log"],
+        "Purpose": ["Compare patient groups easily", "Kidney and blood health in clear stages",
+                    "Quick yes/no warning signs (heart strain, heart damage)", "How many medicines each patient takes",
+                    "How much extra illness a patient carries", "Free inflammation marker from the routine blood count",
+                    "Stop a few extreme values from controlling the models"]})
+    st.dataframe(feats, hide_index=True, width="stretch")
+
 # =====================================================================
 # 4. INTERACTIVE CLINICAL INSIGHTS  (guided: Insight Area -> Marker -> Outcome)
 # =====================================================================
