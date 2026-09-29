@@ -304,7 +304,7 @@ elif page == "📘 Data Overview":
                 unsafe_allow_html=True)
 
    # years = pd.to_datetime(df["admission_date"])
-  raw_dates = pd.to_numeric(df["admission_date"], errors="coerce")
+    raw_dates = pd.to_numeric(df["admission_date"], errors="coerce")
     if raw_dates.notna().mean() > 0.9:
         years = pd.to_datetime(raw_dates, unit="D", origin="1899-12-30")
     else:
@@ -312,7 +312,7 @@ elif page == "📘 Data Overview":
     spec_rows = [("👥", "Patients", f"{len(df):,} hospitalised heart failure patients"),
                  ("🗂️", "Source", "7 hospital tables, linked by patient ID"),
                 # ("📅", "Admissions", f"{years.dt.year.min()} – {years.dt.year.max()}"),
-                 "📅", "Admissions", f"{years.min():%d %b %Y} – {years.max():%d %b %Y}"
+                 "📅", "Admissions", f"{years.min():%d %b %Y} – {years.max():%d %b %Y}",
                  ("⏱️", "Follow-up", "28 days, 3 months, 6 months"),
                  ("🧪", "Tests", "100+ blood tests and vital signs"),
                  ("💊", "Medicines", "25 drugs given in hospital"),
