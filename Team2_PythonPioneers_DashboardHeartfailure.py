@@ -303,10 +303,16 @@ elif page == "📘 Data Overview":
                 "to them up to 6 months after discharge. It lets us find who needs extra care and spot them early.</div>",
                 unsafe_allow_html=True)
 
-    years = pd.to_datetime(df["admission_date"])
+   # years = pd.to_datetime(df["admission_date"])
+  raw_dates = pd.to_numeric(df["admission_date"], errors="coerce")
+    if raw_dates.notna().mean() > 0.9:
+        years = pd.to_datetime(raw_dates, unit="D", origin="1899-12-30")
+    else:
+        years = pd.to_datetime(df["admission_date"], errors="coerce")
     spec_rows = [("👥", "Patients", f"{len(df):,} hospitalised heart failure patients"),
                  ("🗂️", "Source", "7 hospital tables, linked by patient ID"),
-                 ("📅", "Admissions", f"{years.dt.year.min()} – {years.dt.year.max()}"),
+                # ("📅", "Admissions", f"{years.dt.year.min()} – {years.dt.year.max()}"),
+                 "📅", "Admissions", f"{years.min():%d %b %Y} – {years.max():%d %b %Y}"
                  ("⏱️", "Follow-up", "28 days, 3 months, 6 months"),
                  ("🧪", "Tests", "100+ blood tests and vital signs"),
                  ("💊", "Medicines", "25 drugs given in hospital"),
@@ -365,8 +371,8 @@ elif page == "📘 Data Overview":
 # =====================================================================
 elif page == "🧹 Data Cleaning & Feature Engineering":
     st.markdown("<div class='pagetitle'>🧹 Data Cleaning & Feature Engineering</div>", unsafe_allow_html=True)
-    steps = ["Removed a fake patient record and joined all 7 tables into one (one row per patient)",
-             "Set impossible values to blank: 0 kg weight, 0 pulse, BMI of 404, reversed blood pressure",
+    steps = ["Removed an incorrect patient record and joined all 7 tables into one (one row per patient)",
+             "Set impossible values to blank: 0 kg weight, 0 pulse",
              "Fixed wrong units: troponin, hematocrit and heart-scan values",
              "Filled blanks only when the meaning was clear (blank breathing support = no ventilation)",
              "Kept real gaps empty: missing lab tests were not invented",
@@ -827,7 +833,7 @@ elif page == "📌 Key Takeaways & Conclusion":
     take = ["Coming back to hospital (38.5% in 6 months) is a much bigger problem than death (2.8%)",
             "How sick the patient is today matters most: 27% of Killip 4 patients died within 6 months vs 0.8% of Killip 1",
             "Heart and organ warning signs: very high troponin, weak kidneys, high potassium, severe anemia and low sodium",
-            "Simple routine tests work best: NLR is free and available for 99% of patients, while hs-CRP and blood gas were missing for half",
+            "Simple routine tests work best: NLR is free and available for 99% of patients, while hs-CRP and blood gas were missing for about half",,
             "Only about 4 in 10 patients get the key long-term heart medicines (ACE inhibitor/ARB, beta-blocker)",
             "Our simple, explainable model (Logistic Regression) catches 70% of 6-month deaths; the neural network caught none"]
     items = "".join(f"<div class='it'>✅ {x}</div>" for x in take)
