@@ -296,6 +296,7 @@ if page == "🏠 Introduction":
 # =====================================================================
 # 2. DATA OVERVIEW
 # =====================================================================
+
 elif page == "📘 Data Overview":
     st.markdown("<div class='bigtitle'><span></span>DATA OVERVIEW<span></span></div>"
                 "<div class='lead'>This dataset links 7 hospital tables for 2,008 heart failure patients: who they are, "
@@ -303,10 +304,11 @@ elif page == "📘 Data Overview":
                 "to them up to 6 months after discharge. It lets us find who needs extra care and spot them early.</div>",
                 unsafe_allow_html=True)
 
-    years = pd.to_datetime(df["admission_date"])
+   # years = pd.to_datetime(df["admission_date"])
     spec_rows = [("👥", "Patients", f"{len(df):,} hospitalised heart failure patients"),
                  ("🗂️", "Source", "7 hospital tables, linked by patient ID"),
-                 ("📅", "Admissions", f"{years.dt.year.min()} – {years.dt.year.max()}"),
+                #("📅", "Admissions", f"{years.dt.year.min()} – {years.dt.year.max()}"),
+                 ("📅", "Admissions", "2013 – 2016"),
                  ("⏱️", "Follow-up", "28 days, 3 months, 6 months"),
                  ("🧪", "Tests", "100+ blood tests and vital signs"),
                  ("💊", "Medicines", "25 drugs given in hospital"),
@@ -360,18 +362,21 @@ elif page == "📘 Data Overview":
                                     f"<div class='nm' style='color:{colr}'>{nm}</div><ul>{bullets}</ul></div>",
                                     unsafe_allow_html=True)
                         st.plotly_chart(mini(chart()), width="stretch", config={"displayModeBar": False})
+
+
+
 # =====================================================================
 # 3. DATA CLEANING & FEATURE ENGINEERING
 # =====================================================================
 elif page == "🧹 Data Cleaning & Feature Engineering":
     st.markdown("<div class='pagetitle'>🧹 Data Cleaning & Feature Engineering</div>", unsafe_allow_html=True)
-    steps = ["Removed a fake patient record and joined all 7 tables into one (one row per patient)",
-             "Set impossible values to blank: 0 kg weight, 0 pulse, BMI of 404, reversed blood pressure",
+    steps = ["Removed an incorrect patient record and joined all 7 tables into one (one row per patient)",
+             "Set impossible values to blank: 0 kg weight, 0 pulse",
              "Fixed wrong units: troponin, hematocrit and heart-scan values",
              "Filled blanks only when the meaning was clear (blank breathing support = no ventilation)",
              "Kept real gaps empty: missing lab tests were not invented",
              "Changed medicines from many rows per patient to one row per patient",
-             "Renamed confusing lab columns and made yes/no columns 1/0"]
+             "Renamed some lab columns and made yes/no columns 1/0"]
     items = "".join(f"<div class='it'>✅ {x}</div>" for x in steps)
     st.markdown(f"<div class='checkbox'><b class='h'>Data Cleaning Steps:</b>{items}</div>", unsafe_allow_html=True)
 
@@ -385,7 +390,6 @@ elif page == "🧹 Data Cleaning & Feature Engineering":
                     "Stop a few extreme values from controlling the models"]})
     st.dataframe(feats, hide_index=True, width="stretch")
 
-
 # =====================================================================
 # 4. INTERACTIVE CLINICAL INSIGHTS  (guided: Insight Area -> Marker -> Outcome)
 # =====================================================================
@@ -396,7 +400,7 @@ elif page == "🩺 Interactive Clinical Insights":
     with c1: kpi2("🔁", "Came back (6 months)", pct(df["re_admission_within_6_months"].mean()))
     with c2: kpi2("⚠️", "Died (6 months)", pct(df["death_within_6_months"].mean()))
     with c3: kpi2("❤️", "Severe symptoms (NYHA 3–4)", pct((df["nyha_cardiac_function_classification"] >= 3).mean()))
-    with c4: kpi2("🧪", "Median BNP", f"{df['brain_natriuretic_peptide'].median():.0f}")
+   
     st.write("")
 
     # ---------------- helper to cut a column into labelled groups ----------------
@@ -823,19 +827,59 @@ patients and tested on the other 1/5, five times over (5-fold cross-validation),
 # 6. KEY TAKEAWAYS & CONCLUSION
 # =====================================================================
 elif page == "📌 Key Takeaways & Conclusion":
-    st.markdown("<div class='pagetitle'>📌 Key Takeaways</div>", unsafe_allow_html=True)
-    take = ["Coming back to hospital (38.5% in 6 months) is a much bigger problem than death (2.8%)",
-            "How sick the patient is today matters most: 27% of Killip 4 patients died within 6 months vs 0.8% of Killip 1",
-            "Heart and organ warning signs: very high troponin, weak kidneys, high potassium, severe anemia and low sodium",
-            "Simple routine tests work best: NLR is free and available for 99% of patients, while hs-CRP and blood gas were missing for half",
-            "Only about 4 in 10 patients get the key long-term heart medicines (ACE inhibitor/ARB, beta-blocker)",
-            "Our simple, explainable model (Logistic Regression) catches 70% of 6-month deaths; the neural network caught none"]
-    items = "".join(f"<div class='it'>✅ {x}</div>" for x in take)
-    st.markdown(f"<div class='checkbox'><b class='h'>Key Clinical Findings:</b>{items}</div>", unsafe_allow_html=True)
 
-    st.markdown("<div class='pagetitle' style='font-size:36px'>🏁 Conclusion</div>", unsafe_allow_html=True)
-    concl = ["With tests the hospital already does on day 1 (bedside check + routine blood tests), it can spot high-risk patients early",
-             "Acting on these warning signs can save lives, free ICU beds and reduce readmissions through early follow-up",
-             "Limits: one hospital's data and few deaths; results show links, not proof of cause"]
-    items = "".join(f"<div class='it'>✅ {x}</div>" for x in concl)
-    st.markdown(f"<div class='checkbox'>{items}</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='pagetitle'>📌 Key Takeaways</div>",
+        unsafe_allow_html=True
+    )
+
+    take = [
+        "Within 6 months, 38.5% of patients were readmitted, compared with 2.8% who died",
+
+        "Current clinical severity showed a clear difference: 26.7% of Killip 4 patients died within 6 months, compared with 0.8% of Killip 1",
+
+        "Higher-risk patterns were observed with very high troponin, reduced kidney function, high potassium, severe anemia and low sodium",
+
+        "NLR was available for about 99% of patients, while hs-CRP and blood-gas measurements were missing for about half",
+
+        "About 4 in 10 patients received an ACE inhibitor/ARB or a beta-blocker during hospitalization",
+
+        "In 5-fold cross-validation for 6-month mortality, Logistic Regression identified about 70% of patients who died, while the neural network identified none at the 0.5 threshold"
+    ]
+
+    items = "".join(
+        f"<div class='it'>✅ {x}</div>"
+        for x in take
+    )
+
+    st.markdown(
+        f"<div class='checkbox'>"
+        f"<b class='h'>Key Clinical Findings:</b>{items}"
+        f"</div>",
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        "<div class='pagetitle' style='font-size:36px'>"
+        "🏁 Conclusion"
+        "</div>",
+        unsafe_allow_html=True
+    )
+
+    concl = [
+    "Admission-day clinical and laboratory measures showed useful patterns for identifying patients at higher observed risk",
+
+    "These findings can support earlier risk review and help identify patients who may need closer follow-up",
+
+    "Limits: one hospital's data and few deaths; results show links, not proof of cause"
+]
+
+    items = "".join(
+        f"<div class='it'>✅ {x}</div>"
+        for x in concl
+    )
+
+    st.markdown(
+        f"<div class='checkbox'>{items}</div>",
+        unsafe_allow_html=True
+    )
